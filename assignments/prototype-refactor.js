@@ -29,15 +29,25 @@ Prototype Refactor
   * destroy() // prototype method that returns: `${this.name} was removed from the game.`
 */
 
-function GameObject(attrs) {
-    this.createdAt = attrs.createdAt;
-    this.name = attrs.name;
-    this.dimensions = attrs.dimensions;
-    };
+// function GameObject(attrs) {
+//     this.createdAt = attrs.createdAt;
+//     this.name = attrs.name;
+//     this.dimensions = attrs.dimensions;
+//     };
     
-    GameObject.prototype.destroy = function(){
-      return `${this.name} was removed from the game`;
+//     GameObject.prototype.destroy = function(){
+//       return `${this.name} was removed from the game`;
+//     }
+class GameObject {
+    constructor(attrs){
+        this.createdAt = attrs.createdAt;
+        this.name = attrs.name;
+        this.dimensions = attrs.dimensions;
     }
+    destroy(){
+        return `${this.name} was removed from the game`;
+    }
+}    
     
     /*
       === CharacterStats ===
@@ -46,15 +56,26 @@ function GameObject(attrs) {
       * should inherit destroy() from GameObject's prototype
     */
     
-    function CharacterStats(attrs) {
-      GameObject.call(this, attrs);
-      this.healthPoints = attrs.healthPoints;
-    }
+    // function CharacterStats(attrs) {
+    //   GameObject.call(this, attrs);
+    //   this.healthPoints = attrs.healthPoints;
+    // }
     
-    CharacterStats.prototype = Object.create(GameObject.prototype);
+    // CharacterStats.prototype = Object.create(GameObject.prototype);
     
-    CharacterStats.prototype.takeDamage = function(){
-      return `${this.name} took damage`;
+    // CharacterStats.prototype.takeDamage = function(){
+    //   return `${this.name} took damage`;
+    // }
+
+    class CharacterStats extends GameObject{
+        constructor(attrs){
+        super(attrs)
+        this.healthPoints = attrs.healthPoints;    
+        }
+        takeDamage(){
+            return `${this.name} took damage`;
+          }
+        
     }
     
     
@@ -68,19 +89,31 @@ function GameObject(attrs) {
       * should inherit takeDamage() from CharacterStats
     */
     
-    function Humanoid(attrs){
-      GameObject.call(this, attrs);
-      CharacterStats.call(this, attrs);
-      this.team = attrs.team;
-      this.weapons = attrs.weapons;
-      this.language = attrs.language;
-    }
+    // function Humanoid(attrs){
+    //   GameObject.call(this, attrs);
+    //   CharacterStats.call(this, attrs);
+    //   this.team = attrs.team;
+    //   this.weapons = attrs.weapons;
+    //   this.language = attrs.language;
+    // }
     
-    Humanoid.prototype = Object.create(GameObject.prototype);
-    Humanoid.prototype = Object.create(CharacterStats.prototype);
+    // Humanoid.prototype = Object.create(GameObject.prototype);
+    // Humanoid.prototype = Object.create(CharacterStats.prototype);
     
-    Humanoid.prototype.greet = function(){
-      return `${this.name} offers a greeting in ${this.language}`;
+    // Humanoid.prototype.greet = function(){
+    //   return `${this.name} offers a greeting in ${this.language}`;
+    // }
+
+    class Humanoid extends CharacterStats{
+        constructor(attrs){
+        super(attrs)
+        this.team = attrs.team;
+        this.weapons = attrs.weapons;
+        this.language = attrs.language;    
+        }
+        greet(){
+            return `${this.name} offers a greeting in ${this.language}`;
+          }
     }
      
     /*
@@ -162,37 +195,69 @@ function GameObject(attrs) {
     
     // HERE I AM ADDING HUMANOID ATTRIBUTES TO THE VILLIAN AND HERO CLASS
     
-      function Villian(attrs){
-        Humanoid.call(this, attrs);
-      }
+    //   function Villian(attrs){
+    //     Humanoid.call(this, attrs);
+    //   }
     
-      function Hero(attrs){
-        Humanoid.call(this, attrs);
-      }
+    //   function Hero(attrs){
+    //     Humanoid.call(this, attrs);
+    //   }
     
       
     
-      Villian.prototype.attack = function(victim, attackPower){
-        this.victim = victim; //character to be attacked
-        this.attackPower = attackPower; 
-        for (let prop in victim){
-          if (victim.healthPoints < this.attackPower || victim.healthPoints === this.attackPower){
-            return `Your attack was successful ${victim.destroy()}`;
-          }// loop through victim object for health points and check against current attack points for a killshot
-          else {
-            victim.healthPoints = victim.healthPoints - this.attackPower
-            return `Your attack was not strong enough ${victim.name} still has ${victim.healthPoints - this.attackPower} HP left`;
+    //   Villian.prototype.attack = function(victim, attackPower){
+    //     this.victim = victim; //character to be attacked
+    //     this.attackPower = attackPower; 
+    //     for (let prop in victim){
+    //       if (victim.healthPoints < this.attackPower || victim.healthPoints === this.attackPower){
+    //         return `Your attack was successful ${victim.destroy()}`;
+    //       }// loop through victim object for health points and check against current attack points for a killshot
+    //       else {
+    //         victim.healthPoints = victim.healthPoints - this.attackPower
+    //         return `Your attack was not strong enough ${victim.name} still has ${victim.healthPoints - this.attackPower} HP left`;
+    //       }
+    //     }
+    //   }
+      
+      class Villian extends Humanoid{
+        constructor(attrs){
+        super(attrs)
+              
           }
-        }
-      } 
+          attack(victim, attackPower){
+            this.victim = victim; //character to be attacked
+            this.attackPower = attackPower; 
+            for (let prop in victim){
+              if (victim.healthPoints < this.attackPower || victim.healthPoints === this.attackPower){
+                return `Your attack was successful ${victim.destroy()}`;
+              }// loop through victim object for health points and check against current attack points for a killshot
+              else {
+                victim.healthPoints = victim.healthPoints - this.attackPower
+                return `Your attack was not strong enough ${victim.name} still has ${victim.healthPoints - this.attackPower} HP left`;
+              }
+            }
+          }
+      }
     
-    Hero.prototype = Object.create(Humanoid.prototype);
+    // Hero.prototype = Object.create(Humanoid.prototype);
       
-    Hero.prototype.superSaiyan = function(){
-      this.healthPoints = 100;
-      this.powerLevel = null;
+    // Hero.prototype.superSaiyan = function(){
+    //   this.healthPoints = 100;
+    //   this.powerLevel = null;
     
-      return (this.powerLevel = "It's over 9000");
+    //   return (this.powerLevel = "It's over 9000");
+    // }
+
+    class Hero extends Humanoid{
+        constructor(attrs){
+        super(attrs)
+        }
+        superSaiyan(){
+            this.healthPoints = 100;
+            this.powerLevel = null;
+          
+            return (this.powerLevel = "It's over 9000");
+          }
     }
     
     const frieza = new Villian({
@@ -231,7 +296,7 @@ function GameObject(attrs) {
     
       
     
-      // goku.superSaiyan();
+      goku.superSaiyan();
     
       console.log(goku.healthPoints)
     
@@ -239,7 +304,7 @@ function GameObject(attrs) {
     
       frieza.attack(goku,20);
     
-      console.log(frieza.attack(goku,))
+      console.log(frieza.attack(goku,10))
     
     
       console.log(goku.healthPoints)
