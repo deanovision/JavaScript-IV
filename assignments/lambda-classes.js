@@ -134,4 +134,4 @@ const david = new ProjectManager({
 
 //console.log(david.standUp("Web18"))
 
-//console.log(david.debugsCode(michael, "React"))
+console.log(david.debugsCode(michael, "React"))
